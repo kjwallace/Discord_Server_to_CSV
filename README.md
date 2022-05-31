@@ -45,15 +45,16 @@ The method requires three total files:
     - bot_main.py 
     - config.py 
     - cache_channel.py
+    
+ This can easily be done by downloading the "Cache_Bot" folder from this repository.  
 
 As I am not familiar with the details of your machine, I will leave the installation of python and the relevant packages to you. 
 All that is needed is a Python environment with Pandas and the disnake package installed. 
 For a quick tutorial about making a bot and getting a token, see this [tutorial](https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/).
 
-For this method, you only need to download the "Cache_Bot" folder onto your local machine.
 
 1. Editing the Config File:
-    - After making a bot on the discord developer portal,copy the token into the 'token section' of the file. 
+    - After making a bot on the discord developer portal, copy the token into the 'token' field of the file. 
     - The command prefix is the text string that triggers the bot, it can be changed based on user preference.
     - Do not change the "permissions" field.
     - The bot defaults to saving the output in the same folder as the code. If you would like to change this, put the file path in the form of a string in this field.
