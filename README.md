@@ -37,7 +37,13 @@ Output Fields:
 - Time Stamp 
 - If using 'SingleCSV' channel name is included.
 
-If needed, including attachments, replies and other media can be developed in the future.
+If needed, including attachments, replies and other media can be developed in the future. 
+Notes on output:
+    - Unicode Emojis will appear as emojis in the output data and file name.
+    - Custom discord emojis will appear as integers corresponding to their IDs in discord.
+    - @mentions will appear as @Discord_ID which is a string of integers.
+    - Order of users in the "mentions" field will not necessarily match the order that they appear in the message. 
+    - At the moment reactions and replies cannot be reflected in the output CSV (in development).
 
 ## Bot Installation and Setup 
 
