@@ -6,9 +6,9 @@ import sys
 from datetime import time  
 
 import disnake 
+from disnake.ext import commands
 from disnake import ApplicationCommandInteraction  
 from disnake.ext.commands import Bot
-from disnake.ext.commands import commands
 from disnake.ext.commands import Context 
 
 
@@ -33,8 +33,9 @@ class Cache_Bot(commands.Bot):
     intents.typing = False
     intents.presences = False
     intents.reactions = True
+    intents.message_content = True
     
-    def __init__(self,config = config):
+    def __init__(self,config = config, intents = intents):
         
         self.config = config
         
@@ -55,7 +56,7 @@ class Cache_Bot(commands.Bot):
            
            if end == '.py':
                try:
-                   self.load_extension(f"cogs.{command_type}.{extension}")
+                   self.load_extension(f"cache_command.{command_type}.{extension}")
                    print(f"Loaded {extension}!")
                except Exception as e:
                    exception = f"{type(e).__name__}: {e}"
