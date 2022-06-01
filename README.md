@@ -44,12 +44,12 @@ If needed, including attachments, replies and other media can be developed in th
 The method requires three total files:
     - bot_main.py 
     - config.py 
-    - cache_channel.py
+    - message_cache.py
     
  This can easily be done by downloading the "Cache_Bot" folder from this repository.  
 
 As I am not familiar with the details of your machine, I will leave the installation of python and the relevant packages to you. 
-All that is needed is a Python environment with Pandas and the disnake package installed. 
+All that is needed is a Python environment with Pandas and the disnake 2.5.1 package installed. 
 For a quick tutorial about making a bot and getting a token, see this [tutorial](https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/).
 
 
