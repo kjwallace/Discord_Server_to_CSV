@@ -61,7 +61,8 @@ class CSV_Channel(commands.Cog):
                 df = pd.concat([df, temp_df], ignore_index = True)
         
         df.to_csv(f'{self.bot.config["output_url"]}/{context.channel.name}.csv', sep = '~')
-        
+        print(f"Finished running on {context.channel.name}")
+
     @commands.command(
         name = 'CSVServer',
         description = 'Makes a CSV cache of the entire dircord server')
@@ -97,7 +98,8 @@ class CSV_Channel(commands.Cog):
                 print(f'Finished caching {channel.name}')
             else:
                 pass
-            
+        print("Done")
+    
     @commands.command(
         name = 'SingleCSV',
         description = 'Makes the whole server into a one CSV')
@@ -130,7 +132,7 @@ class CSV_Channel(commands.Cog):
                     df = pd.concat([df, temp_df], ignore_index = True)
                     
         df.to_csv(f'{self.bot.config["output_url"]}/{context.guild.name}_full.csv', sep = '~')
-        
+        print("Done running full server")
         
                 
        
