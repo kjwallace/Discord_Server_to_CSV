@@ -7,7 +7,8 @@ from datetime import time
 
 import disnake 
 from disnake import ApplicationCommandInteraction  
-from disnake.ext.commands import Bot 
+from disnake.ext.commands import Bot
+from disnake.ext.commands import commands
 from disnake.ext.commands import Context 
 
 
