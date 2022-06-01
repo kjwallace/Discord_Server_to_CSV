@@ -11,7 +11,7 @@ This execution of a server exporting bot is done using Python on top of the disn
 
 Package Requirements:
     - Python 3.8+
-    - Disnake==2.4.0
+    - Disnake==2.5.1
     - Pandas
     - aiohttp
     
