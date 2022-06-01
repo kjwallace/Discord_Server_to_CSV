@@ -12,6 +12,17 @@ from disnake.ext.commands import Context
 import pandas as pd
 
 from datetime import datetime, timedelta 
+import re
+
+def mention_to_user(content : str, guild: disnake.Guild) -> str:
+    message = content
+    while re.findall(r'\<@\d+\>', message) != []:
+        matches = re.findall(r'\<@\d+\>', content)
+        user = guild.get_member(int(matches[0][2:-1]))
+        output = re.sub(r'\<@\d+\>', str(user), message)
+        message = output
+        
+    return message 
 
 class CSV_Channel(commands.Cog):
     def __init__(self, bot):
@@ -34,7 +45,7 @@ class CSV_Channel(commands.Cog):
                 if True :  #(message.created_at - member.joined_at) < timedelta(days =3):
                     user = message.author.name
                     dics = message.author.discriminator
-                    content = message.content
+                    content = mention_to_user(message.content, context.guild)
                     time_stamp = message.created_at
                     mens = []
                     for people in message.mentions:
@@ -50,7 +61,7 @@ class CSV_Channel(commands.Cog):
             for message in messages:
                 user = message.author.name
                 dics = message.author.discriminator
-                content = message.content
+                content = mention_to_user(message.content, context.guild)
                 time_stamp = message.created_at
                 mens = []
                 for people in message.mentions:
@@ -84,7 +95,7 @@ class CSV_Channel(commands.Cog):
                 for message in messages:
                     user = message.author.name
                     dics = message.author.discriminator
-                    content = message.content
+                    content = mention_to_user(message.content, context.guild)
                     time_stamp = message.created_at
                     mens = []
                     for people in message.mentions:
@@ -116,7 +127,7 @@ class CSV_Channel(commands.Cog):
                 for message in messages:
                     user = message.author.name
                     dics = message.author.discriminator
-                    content = message.content
+                    content = mention_to_user(message.content, context.guild)
                     time_stamp = message.created_at
                     mens = []
                     for people in message.mentions:
