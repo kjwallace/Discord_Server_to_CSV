@@ -62,9 +62,9 @@ For a quick tutorial about making a bot and getting a token, see this [tutorial]
 
 1. Editing the Config File:
     - After making a bot on the discord developer portal, copy the token into the 'token' field of the file. 
-    - The command prefix is the text string that triggers the bot, it can be changed based on user preference.
+    - The command prefix is the text string that triggers the bot, it can be changed based on user preference but must be a string.
     - Do not change the "permissions" field.
-    - The bot defaults to saving the output in the same folder as the code. If you would like to change this, put the file path in the form of a string in this field.
+    - The bot defaults to saving the output in the Output_CSVs folder. If you would like to change this, put the file path in the form of a string in this field. If you would like to customize output for each function. change the path argument for df.to_csv in each of the functions in the "message_cache.py" file.
 
 2. Add the bot to your discord server.
     - How to do this is covered in the tutorial linked above. 
