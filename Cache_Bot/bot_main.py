@@ -56,7 +56,7 @@ class Cache_Bot(commands.Bot):
            
            if end == '.py':
                try:
-                   self.load_extension(f"cache_command.{command_type}.{extension}")
+                   self.load_extension(f"{command_type}.{extension}")
                    print(f"Loaded {extension}!")
                except Exception as e:
                    exception = f"{type(e).__name__}: {e}"
