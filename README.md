@@ -46,7 +46,8 @@ The method requires three total files:
     - config.py 
     - message_cache.py
     
- This can easily be done by downloading the "Cache_Bot" folder from this repository.  
+It is reccomended that you download the "Cache_Bot" folder from this repository and maintain how the files are organized. The bot loads the commands from a the "message_cache.py" file and looks for it in a folder called "cache_command" that resides in the same directory as "bot_main.py".
+To maintain proper structure, please clone the repo or maintain the exact file locations as hosted on git hub.
 
 As I am not familiar with the details of your machine, I will leave the installation of python and the relevant packages to you. 
 All that is needed is a Python environment with Pandas and the disnake 2.5.1 package installed. 
@@ -73,5 +74,6 @@ For a quick tutorial about making a bot and getting a token, see this [tutorial]
 5. Command completion.
     - After step 4, a CSV with '~' as its delimiter should appear in the desired location. and a Command complete message will appear in the terminal. 
     - For debugging, contact me **kellyd73#0168** on discord.
+
     
 
