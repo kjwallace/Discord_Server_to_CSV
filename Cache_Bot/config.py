@@ -5,6 +5,6 @@ def Config():
             "token":'your_token_here',
             "command_pref":"!!",
             "permissions":8,
-            "output_url" : os.path.dirname(os.path.realpath(__name__))
+            "output_url" : f'{os.path.dirname(os.path.realpath(__name__))}/Output_CSVs'
             }
     return config
