@@ -45,7 +45,7 @@ class CSV_Channel(commands.Cog):
                 if True :  #(message.created_at - member.joined_at) < timedelta(days =3):
                     user = message.author.name
                     dics = message.author.discriminator
-                    content = mention_to_user(message.content, context.guild)
+                    content = mention_to_user(content = message.content, guild = context.guild)
                     time_stamp = message.created_at
                     mens = []
                     for people in message.mentions:
@@ -61,7 +61,7 @@ class CSV_Channel(commands.Cog):
             for message in messages:
                 user = message.author.name
                 dics = message.author.discriminator
-                content = mention_to_user(message.content, context.guild)
+                content = mention_to_user(content = message.content, guild = context.guild)
                 time_stamp = message.created_at
                 mens = []
                 for people in message.mentions:
@@ -95,7 +95,7 @@ class CSV_Channel(commands.Cog):
                 for message in messages:
                     user = message.author.name
                     dics = message.author.discriminator
-                    content = mention_to_user(message.content, context.guild)
+                    content = mention_to_user(content = message.content, guild = context.guild)
                     time_stamp = message.created_at
                     mens = []
                     for people in message.mentions:
@@ -127,7 +127,7 @@ class CSV_Channel(commands.Cog):
                 for message in messages:
                     user = message.author.name
                     dics = message.author.discriminator
-                    content = mention_to_user(message.content, context.guild)
+                    content = mention_to_user(content = message.content, guild = context.guild)
                     time_stamp = message.created_at
                     mens = []
                     for people in message.mentions:
