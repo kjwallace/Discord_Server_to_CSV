@@ -71,7 +71,7 @@ For a quick tutorial about making a bot and getting a token, see this [tutorial]
     - User sending the message must have administrator permission within the server.
 
 5. Command completion.
-    - After step 4, a CSV with '~' as its deliminator should appear in the desired location. and a Command complete message will appear in the terminal. 
+    - After step 4, a CSV with '~' as its delimiter should appear in the desired location. and a Command complete message will appear in the terminal. 
     - For debugging, contact me **kellyd73#0168** on discord.
     
 
