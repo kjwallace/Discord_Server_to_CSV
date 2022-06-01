@@ -72,5 +72,6 @@ if __name__ == '__main__':
     
     if token is not None:
         bot.run(token)
+        print("Logged In")
     else:
         print('Log In Failure, check location of token.')
