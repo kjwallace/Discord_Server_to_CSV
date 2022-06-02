@@ -10,19 +10,9 @@ import disnake
 from disnake.ext import commands 
 from disnake.ext.commands import Context
 import pandas as pd
-
-from datetime import datetime, timedelta 
 import re
 
-def mention_to_user(content : str, guild: disnake.Guild) -> str:
-    message = content
-    while re.findall(r'\<@\d+\>', message) != []:
-        matches = re.findall(r'\<@\d+\>', content)
-        user = guild.get_member(int(matches[0][2:-1]))
-        output = re.sub(r'\<@\d+\>', str(user), message)
-        message = output
-        
-    return message 
+
 
 class CSV_Channel(commands.Cog):
     def __init__(self, bot):
@@ -45,12 +35,12 @@ class CSV_Channel(commands.Cog):
                 if True :  #(message.created_at - member.joined_at) < timedelta(days =3):
                     user = message.author.name
                     dics = message.author.discriminator
-                    content = mention_to_user(content = message.content, guild = context.guild)
+                    text = mention_to_user(content = message.content, guild = context.guild)
                     time_stamp = message.created_at
                     mens = []
                     for people in message.mentions:
                         mens += [str(people)]
-                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [content],'mentions': mens, 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
+                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': mens, 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
                     #temp_df = pd.DataFrame(data = [user, dics, content, time_stamp.strftime("%m/%d/%Y, %H:%M:%S")], Axis = 1)
                     #temp_df = {'username': user, 'disc': dics, 'message_content': content, 'time_stamp': time_stamp.strftime("%m/%d/%Y, %H:%M:%S")}
                     df = pd.concat([df, temp_df], ignore_index = True)
@@ -59,14 +49,17 @@ class CSV_Channel(commands.Cog):
             
         else:
             for message in messages:
+                
                 user = message.author.name
                 dics = message.author.discriminator
-                content = mention_to_user(content = message.content, guild = context.guild)
+                text = mention_to_user(content = message.content, guild = context.guild)
+                
+                
                 time_stamp = message.created_at
                 mens = []
                 for people in message.mentions:
                     mens += [str(people)]
-                temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [content],'mentions': [mens], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
+                temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
                 #temp_df = pd.DataFrame(data = [user, dics, content, time_stamp.strftime("%m/%d/%Y, %H:%M:%S")], Axis = 1)
                 #temp_df = {'username': user, 'disc': dics, 'message_content': content, 'time_stamp': time_stamp.strftime("%m/%d/%Y, %H:%M:%S")}
                 df = pd.concat([df, temp_df], ignore_index = True)
@@ -95,12 +88,12 @@ class CSV_Channel(commands.Cog):
                 for message in messages:
                     user = message.author.name
                     dics = message.author.discriminator
-                    content = mention_to_user(content = message.content, guild = context.guild)
+                    text = mention_to_user(content = message.content, guild = context.guild)
                     time_stamp = message.created_at
                     mens = []
                     for people in message.mentions:
                         mens += [str(people)]
-                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [content],'mentions': [mens], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
+                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
                         #temp_df = pd.DataFrame(data = [user, dics, content, time_stamp.strftime("%m/%d/%Y, %H:%M:%S")], Axis = 1)
                         #temp_df = {'username': user, 'disc': dics, 'message_content': content, 'time_stamp': time_stamp.strftime("%m/%d/%Y, %H:%M:%S")}
                     df = pd.concat([df, temp_df], ignore_index = True)
@@ -127,7 +120,7 @@ class CSV_Channel(commands.Cog):
                 for message in messages:
                     user = message.author.name
                     dics = message.author.discriminator
-                    content = mention_to_user(content = message.content, guild = context.guild)
+                    text = mention_to_user(content = message.content, guild = context.guild)
                     time_stamp = message.created_at
                     mens = []
                     for people in message.mentions:
@@ -137,7 +130,7 @@ class CSV_Channel(commands.Cog):
                     for roles in message.author.roles:
                         user_roles += [str(roles)]
                     '''    
-                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [content],'mentions': [mens], 'channel_name': [channel.name],'guild':[context.guild.name], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
+                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'channel_name': [channel.name],'guild':[context.guild.name], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
                         #'user_roles': [user_roles[1:]
                         #temp_df = {'username': user, 'disc': dics, 'message_content': content, 'time_stamp': time_stamp.strftime("%m/%d/%Y, %H:%M:%S")}
                     df = pd.concat([df, temp_df], ignore_index = True)
@@ -145,11 +138,37 @@ class CSV_Channel(commands.Cog):
         df.to_csv(f'{self.bot.config["output_url"]}/{context.guild.name}_full.csv', sep = '~')
         print("Done running full server")
         
+        
+    @commands.command(
+        name = 'regex')
+    async def Regex(self, context: Context, *, boobs: str) -> None:
+        stuff = mention_to_user(content = boobs, guild = context.guild)
+        print(context.message.content)
+        print(stuff)
+        return None
+            
+            
+       
+        
+       
                 
        
             
 def setup(bot):
     bot.add_cog(CSV_Channel(bot))
+    
+def mention_to_user(content : str, guild: disnake.Guild) -> str:
+    message = content
+    
+    for matches in re.findall(r'\<@\d+\>', content):
+        
+        user = guild.get_member(int(matches[2:-1]))
+        output = re.sub(r'\<@\d+\>', str(user), message, count = 1)
+        message = output
+        
+    return message 
+        
+        
         
             
         
