@@ -10,6 +10,7 @@ Prepared for the LabDAO <> TalentDAO collaborative effort on server health and c
 This execution of a server exporting bot is done using Python on top of the disnake pythonic discord API and outputs to a location of your choice on your local machine. 
 
 Package Requirements:
+
     - Python 3.8+
     - Disnake==2.4.0
     - Pandas, current distribution
