@@ -3,7 +3,7 @@
 """
 Created on Wed May 18 19:01:39 2022
 
-@author: philipwallace
+
 """
 
 import disnake 
@@ -139,15 +139,7 @@ class CSV_Channel(commands.Cog):
         print("Done running full server")
         
         
-    @commands.command(
-        name = 'regex')
-    async def Regex(self, context: Context, *, boobs: str) -> None:
-        stuff = mention_to_user(content = boobs, guild = context.guild)
-        print(context.message.content)
-        print(stuff)
-        return None
-            
-            
+        
        
         
        
