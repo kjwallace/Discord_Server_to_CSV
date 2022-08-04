@@ -12,11 +12,12 @@ This execution of a server exporting bot is done using Python on top of the disn
 Package Requirements:
 
     - Python 3.8+
-    - Disnake==2.4.0
+    - Disnake==2.5.1
     - Pandas, current distribution
     - aiohttp
     
 This implementation also requires you to have a bot token created through the discord developer portal, found [here](https://discord.com/login?redirect_to=%2Fdevelopers%2Fapplications). That is added to the target server. It is required that the bot has 'read_channel_history' permissions turned on. 
+A discord update now locks some of this functionality behind "privledged intents", so make sure the slider to enable these and the discord dev portal is turned on.
 
 ## Included Commands
 
