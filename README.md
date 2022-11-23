@@ -3,6 +3,8 @@
 Prepared in conjunction with LabDAO <> TalentDAO on their collaborative effort on server health and community interaction. 
 This bot saves server communications in a format suitable to perform natural language inference and organizational psychometrics.
 
+This bot is still in active development to add more fields and to integrate with cloud databasing solutions for continuous updating of server data.
+
 ## Summary
 
 ---
