@@ -1,6 +1,6 @@
 # Pulling Discord Data Instrcutions
 
-Prepared for the LabDAO <> TalentDAO collaborative effort on server health and community interaction. 
+Prepared in conjunction with LabDAO <> TalentDAO on their collaborative effort on server health and community interaction. 
 This bot saves server communications in a format suitable to perform natural language inference and organizational psychometrics.
 
 ## Summary
@@ -73,7 +73,7 @@ For a quick tutorial about making a bot and getting a token, see this [tutorial]
 
 5. Command completion.
     - After step 4, a CSV with '~' as its deliminator should appear in the desired location. and a Command complete message will appear in the terminal. 
-    - For debugging, contact me **kellyd73#0168** on discord.
+    - For debugging, contact me **kellyd73#0168** on discord or join the CSV_Bot [server](https://discord.gg/QATr8ugAmw) to ask questions.
 
 
 ## Full End to End Using Conda
