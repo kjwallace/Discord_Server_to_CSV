@@ -1,13 +1,14 @@
 # Pulling Discord Data Instrcutions
 
 Prepared for the LabDAO <> TalentDAO collaborative effort on server health and community interaction. 
+This bot saves server communications in a format suitable to perform natural language inference and organizational psychometrics.
 
 ## Summary
 
 ---
 
 
-This execution of a server exporting bot is done using Python on top of the disnake pythonic discord API and outputs to a location of your choice on your local machine. 
+This execution of a server exporting bot is done using Python on top of the disnake pythonic discord API and outputs a server cache to a location of your choice on your local machine. 
 
 Package Requirements:
 
@@ -39,7 +40,7 @@ Output Fields:
     - Time Stamp 
     - If using 'SingleCSV' channel name is included.
 
-If needed, an output that includes attachments, replies and other media can be developed in the future.
+If needed, an output that includes attachments, replies and other media can be developed in the future. Saving channel threads and links to message attachments will go into development in the near future.
 
 ## Bot Installation and Setup 
 
