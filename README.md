@@ -33,6 +33,7 @@ A discord update now locks some of this functionality behind "privledged intents
     - Makes one CSV with every message sent in the server, with a column identifying which channel each message was sent in.
 
 Output Fields:
+
     - Discord Usernames 
     - Discord Discriminator 
     - Message Content
