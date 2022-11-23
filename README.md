@@ -7,9 +7,12 @@ This bot is still in active development to add more fields and to integrate with
 
 ## Summary
 
+### Discord Server
+If you encounter any issues with the installation of the bot, have a feature request, or want to contribute feel free to join the discord [server](https://discord.gg/QATr8ugAmw).
+
 ---
 
-
+### Dependencies
 This execution of a server exporting bot is done using Python on top of the disnake pythonic discord API and outputs a server cache to a location of your choice on your local machine. 
 
 Package Requirements:
