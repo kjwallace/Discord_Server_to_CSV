@@ -81,11 +81,18 @@ class CSV_Channel(commands.Cog):
         '''
         for channel in channels:
             if channel.type == disnake.ChannelType.text:
-                columns = ['username', 'disc', 'message_content', 'mentions','time_stamp']
+                columns = ['username', 'disc', 'message_content', 'mentions','time_stamp', 'replied_to_message', 'replied_to_user']
                 df = pd.DataFrame(columns = columns)
                 messages = await channel.history(limit=None).flatten()
-            
+
                 for message in messages:
+                    replied_to_message = ""
+                    replied_to_user = ""
+                    # regonize if the message is a reply
+                    if message.type == disnake.MessageType.reply:
+                        replied_to_message = message.reference.resolved.content
+                        replied_to_user = message.reference.resolved.author.name
+
                     user = message.author.name
                     dics = message.author.discriminator
                     text = mention_to_user(content = message.content, guild = context.guild)
@@ -93,7 +100,7 @@ class CSV_Channel(commands.Cog):
                     mens = []
                     for people in message.mentions:
                         mens += [str(people)]
-                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
+                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")], 'replied_to_message': [replied_to_message], 'replied_to_user': [replied_to_user]})
                         #temp_df = pd.DataFrame(data = [user, dics, content, time_stamp.strftime("%m/%d/%Y, %H:%M:%S")], Axis = 1)
                         #temp_df = {'username': user, 'disc': dics, 'message_content': content, 'time_stamp': time_stamp.strftime("%m/%d/%Y, %H:%M:%S")}
                     df = pd.concat([df, temp_df], ignore_index = True)
