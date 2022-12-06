@@ -12,8 +12,6 @@ from disnake.ext.commands import Context
 import pandas as pd
 import re
 
-
-
 class CSV_Channel(commands.Cog):
     def __init__(self, bot):
         self.bot = bot 
@@ -25,7 +23,7 @@ class CSV_Channel(commands.Cog):
         description = 'Creates a CSV containing every message and user in the #Introduction channel'
         )
     async def cacheChannel(self, context: Context, *, intro: str = None) -> None:
-        columns = ['username', 'disc', 'message_content', 'mentions', 'time_stamp']
+        columns = ['username', 'disc', 'message_content', 'mentions', 'attachment_url', 'time_stamp']
         df = pd.DataFrame(columns = columns)
         messages = await context.channel.history(limit=None).flatten()
         #discriminate between real intros and current user response to intro
@@ -36,11 +34,21 @@ class CSV_Channel(commands.Cog):
                     user = message.author.name
                     dics = message.author.discriminator
                     text = mention_to_user(content = message.content, guild = context.guild)
+
+                    attach = []
+                    if message.attachments: # if message has an attachment(s)
+                        attach = []
+                        for a in message.attachments:
+                            attach += [str(a.url)]
+
                     time_stamp = message.created_at
                     mens = []
+
                     for people in message.mentions:
                         mens += [str(people)]
-                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': mens, 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
+
+                    
+                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': mens, 'attachment_url': [attach], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
                     #temp_df = pd.DataFrame(data = [user, dics, content, time_stamp.strftime("%m/%d/%Y, %H:%M:%S")], Axis = 1)
                     #temp_df = {'username': user, 'disc': dics, 'message_content': content, 'time_stamp': time_stamp.strftime("%m/%d/%Y, %H:%M:%S")}
                     df = pd.concat([df, temp_df], ignore_index = True)
@@ -54,12 +62,17 @@ class CSV_Channel(commands.Cog):
                 dics = message.author.discriminator
                 text = mention_to_user(content = message.content, guild = context.guild)
                 
-                
+                attach = []
+                if message.attachments: # if message has an attachment(s)
+                    attach = []
+                    for a in message.attachments:
+                        attach += [str(a.url)]
+
                 time_stamp = message.created_at
                 mens = []
                 for people in message.mentions:
                     mens += [str(people)]
-                temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
+                temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'attachment_url': [attach], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
                 #temp_df = pd.DataFrame(data = [user, dics, content, time_stamp.strftime("%m/%d/%Y, %H:%M:%S")], Axis = 1)
                 #temp_df = {'username': user, 'disc': dics, 'message_content': content, 'time_stamp': time_stamp.strftime("%m/%d/%Y, %H:%M:%S")}
                 df = pd.concat([df, temp_df], ignore_index = True)
@@ -81,7 +94,7 @@ class CSV_Channel(commands.Cog):
         '''
         for channel in channels:
             if channel.type == disnake.ChannelType.text:
-                columns = ['username', 'disc', 'message_content', 'mentions','time_stamp']
+                columns = ['username', 'disc', 'message_content', 'mentions', 'attachment_url','time_stamp']
                 df = pd.DataFrame(columns = columns)
                 messages = await channel.history(limit=None).flatten()
             
@@ -91,9 +104,16 @@ class CSV_Channel(commands.Cog):
                     text = mention_to_user(content = message.content, guild = context.guild)
                     time_stamp = message.created_at
                     mens = []
+
+                    attach = []
+                    if message.attachments: # if message has an attachment(s)
+                        attach = []
+                        for a in message.attachments:
+                            attach += [str(a.url)]
+
                     for people in message.mentions:
                         mens += [str(people)]
-                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
+                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'attachment_url': [attach],'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
                         #temp_df = pd.DataFrame(data = [user, dics, content, time_stamp.strftime("%m/%d/%Y, %H:%M:%S")], Axis = 1)
                         #temp_df = {'username': user, 'disc': dics, 'message_content': content, 'time_stamp': time_stamp.strftime("%m/%d/%Y, %H:%M:%S")}
                     df = pd.concat([df, temp_df], ignore_index = True)
@@ -109,7 +129,7 @@ class CSV_Channel(commands.Cog):
         description = 'Makes the whole server into a one CSV')
     async def SingleCSV(self, context: Context) -> None:
         channels = await context.guild.fetch_channels()
-        columns = ['username', 'disc', 'user_roles', 'message_content', 'mentions','channel_name', 'guild','time_stamp']
+        columns = ['username', 'disc', 'user_roles', 'message_content', 'mentions','channel_name', 'guild', 'attachment_url', 'time_stamp']
         df = pd.DataFrame(columns = columns)
         
         for channel in channels:
@@ -129,19 +149,20 @@ class CSV_Channel(commands.Cog):
                     user_roles = []
                     for roles in message.author.roles:
                         user_roles += [str(roles)]
-                    '''    
-                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'channel_name': [channel.name],'guild':[context.guild.name], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
+                    '''
+                    attach = []
+                    if message.attachments: # if message has an attachment(s)
+                        attach = []
+                        for a in message.attachments:
+                            attach += [str(a.url)]
+
+                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'channel_name': [channel.name],'guild':[context.guild.name], 'attachment_url': [attach], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
                         #'user_roles': [user_roles[1:]
                         #temp_df = {'username': user, 'disc': dics, 'message_content': content, 'time_stamp': time_stamp.strftime("%m/%d/%Y, %H:%M:%S")}
                     df = pd.concat([df, temp_df], ignore_index = True)
                     
         df.to_csv(f'{self.bot.config["output_url"]}/{context.guild.name}_full.csv', sep = '~')
         print("Done running full server")
-        
-        
-        
-       
-        
        
                 
        
