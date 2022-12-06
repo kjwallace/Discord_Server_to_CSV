@@ -119,12 +119,17 @@ class CSV_Channel(commands.Cog):
                 
                 for message in messages:
                     user = message.author.name
+                   #print("User: " + user)
                     dics = message.author.discriminator
+                    print("Channel: " + message.channel.name)
                     text = mention_to_user(content = message.content, guild = context.guild)
+                    text = channel_mention_to_user(fullText = text, guild = context.guild)
                     time_stamp = message.created_at
                     mens = []
                     for people in message.mentions:
                         mens += [str(people)]
+                        print("BROSKIs")
+                        print(mens)
                     '''    
                     user_roles = []
                     for roles in message.author.roles:
@@ -151,15 +156,37 @@ def setup(bot):
     
 def mention_to_user(content : str, guild: disnake.Guild) -> str:
     message = content
+    print("message")
+    print(message)
     
     for matches in re.findall(r'\<@\d+\>', content):
-        
+        #print("Match")
+        #print(matches)
         user = guild.get_member(int(matches[2:-1]))
+        #print(user)
         output = re.sub(r'\<@\d+\>', str(user), message, count = 1)
+        #print("output here")
+        #print(output)
         message = output
         
     return message 
-        
+
+def channel_mention_to_user(fullText : str, guild:disnake.Guild) -> str:
+    fullMessage = fullText
+    allChannels = []
+    print("Channel Mentions")
+    #print(fullText.guild.name)
+    for channel in guild.text_channels:
+        allChannels.append(channel)
+    
+    print("All the channels")
+    print(allChannels)
+
+    for channelMentions in re.findall(r'\<#\d+\>', fullText):
+        print("Match")
+        print(channelMentions)
+
+
         
         
             
