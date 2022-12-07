@@ -53,8 +53,7 @@ class CSV_Channel(commands.Cog):
                 user = message.author.name
                 dics = message.author.discriminator
                 text = mention_to_user(content = message.content, guild = context.guild)
-                
-                
+                text = channel_mention_or_role_formatter(fullText = text, guild = context.guild) # Function to convert IDs to names
                 time_stamp = message.created_at
                 mens = []
                 for people in message.mentions:
@@ -89,6 +88,7 @@ class CSV_Channel(commands.Cog):
                     user = message.author.name
                     dics = message.author.discriminator
                     text = mention_to_user(content = message.content, guild = context.guild)
+                    text = channel_mention_or_role_formatter(fullText = text, guild = context.guild) # Function to convert IDs to names
                     time_stamp = message.created_at
                     mens = []
                     for people in message.mentions:
@@ -119,17 +119,13 @@ class CSV_Channel(commands.Cog):
                 
                 for message in messages:
                     user = message.author.name
-                   #print("User: " + user)
                     dics = message.author.discriminator
-                    print("Channel: " + message.channel.name)
                     text = mention_to_user(content = message.content, guild = context.guild)
-                    text = channel_mention_to_user(fullText = text, guild = context.guild)
+                    text = channel_mention_or_role_formatter(fullText = text, guild = context.guild) # Function to convert IDs to names
                     time_stamp = message.created_at
                     mens = []
                     for people in message.mentions:
                         mens += [str(people)]
-                        print("BROSKIs")
-                        print(mens)
                     '''    
                     user_roles = []
                     for roles in message.author.roles:
@@ -156,35 +152,41 @@ def setup(bot):
     
 def mention_to_user(content : str, guild: disnake.Guild) -> str:
     message = content
-    print("message")
-    print(message)
     
     for matches in re.findall(r'\<@\d+\>', content):
-        #print("Match")
-        #print(matches)
         user = guild.get_member(int(matches[2:-1]))
-        #print(user)
         output = re.sub(r'\<@\d+\>', str(user), message, count = 1)
-        #print("output here")
-        #print(output)
         message = output
         
     return message 
 
-def channel_mention_to_user(fullText : str, guild:disnake.Guild) -> str:
+def channel_mention_or_role_formatter(fullText : str, guild:disnake.Guild) -> str:
     fullMessage = fullText
-    allChannels = []
-    print("Channel Mentions")
-    #print(fullText.guild.name)
-    for channel in guild.text_channels:
-        allChannels.append(channel)
-    
-    print("All the channels")
-    print(allChannels)
+    allChannels = {} # Store all existing channels and roles into dictionaries
+    allRoles = {}
 
-    for channelMentions in re.findall(r'\<#\d+\>', fullText):
-        print("Match")
-        print(channelMentions)
+    # Determine mapping between existing channel or role IDs 
+    # and their corresponding names
+    for channel in guild.text_channels:
+        allChannels.update({channel.id: channel.name})
+    for role in guild.roles:
+        allRoles.update({role.id: role.name})
+
+    # Replace every channel ID instance with their corresponding name mapping
+    for channelMentions in re.findall(r'\<#(\d+)\>', fullText):
+        channelName = allChannels.get(int(channelMentions))
+        channelName = "#{" + channelName + "}" # Format channel name for CSV file
+        replaceChannelID = re.sub(r'\<#\d+\>', channelName, fullMessage, count = 1)
+        fullMessage = replaceChannelID
+    
+    #Replace every instance of role ID mention with their corresponding name
+    for roleID in re.findall(r'\<@&(\d+)\>', fullMessage):
+        roleName = allRoles.get(int(roleID))
+        roleName = "@{" + roleName + "}" # Format role name for database
+        replaceRoleID = re.sub(r'\<@&\d+\>', roleName, fullMessage, count = 1)
+        fullMessage = replaceRoleID
+
+    return fullMessage
 
 
         
