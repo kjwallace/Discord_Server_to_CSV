@@ -47,8 +47,8 @@ class CSV_Channel(commands.Cog):
                     for people in message.mentions:
                         mens += [str(people)]
 
-                    
                     temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': mens, 'attachment_url': [attach], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
+
                     #temp_df = pd.DataFrame(data = [user, dics, content, time_stamp.strftime("%m/%d/%Y, %H:%M:%S")], Axis = 1)
                     #temp_df = {'username': user, 'disc': dics, 'message_content': content, 'time_stamp': time_stamp.strftime("%m/%d/%Y, %H:%M:%S")}
                     df = pd.concat([df, temp_df], ignore_index = True)
@@ -67,6 +67,8 @@ class CSV_Channel(commands.Cog):
                     attach = []
                     for a in message.attachments:
                         attach += [str(a.url)]
+
+                text = channel_mention_or_role_formatter(fullText = text, guild = context.guild) # Function to convert IDs to names
 
                 time_stamp = message.created_at
                 mens = []
@@ -93,15 +95,41 @@ class CSV_Channel(commands.Cog):
             print('_______________________________')
         '''
         for channel in channels:
+            messages=[]
+            in_threads = {}
+            for thread in channel.guild.threads:
+                for message in await thread.history(limit=None).flatten() :
+                    messages += [message]
+                    in_threads[message.id] = [thread.name, channel.name]
+
             if channel.type == disnake.ChannelType.text:
-                columns = ['username', 'disc', 'message_content', 'mentions', 'attachment_url','time_stamp']
+
+                columns = ['username', 'disc', 'message_content', 'mentions', 'attachment_url', 'time_stamp', 'replied_to_message', 'replied_to_user', 'from_thread', 'from_thread_name']
+
                 df = pd.DataFrame(columns = columns)
-                messages = await channel.history(limit=None).flatten()
-            
+                messages += await channel.history(limit=None).flatten()
+
                 for message in messages:
+                    # check if the message is from a thread
+                    if message.thread is not None:
+                        thread = True
+                        thread_name = message.thread.name + '-' + channel.name
+                    elif message.id in in_threads:
+                        thread_name = in_threads[message.id][0]+'-'+in_threads[message.id][1]
+                    else:
+                        thread = False
+                        thread_name = ""
+                    replied_to_message = ""
+                    replied_to_user = ""
+                    # regonize if the message is a reply
+                    if message.type == disnake.MessageType.reply:
+                        replied_to_message = message.reference.resolved.content
+                        replied_to_user = message.reference.resolved.author.name
+
                     user = message.author.name
                     dics = message.author.discriminator
                     text = mention_to_user(content = message.content, guild = context.guild)
+                    text = channel_mention_or_role_formatter(fullText = text, guild = context.guild) # Function to convert IDs to names
                     time_stamp = message.created_at
                     mens = []
 
@@ -113,7 +141,11 @@ class CSV_Channel(commands.Cog):
 
                     for people in message.mentions:
                         mens += [str(people)]
-                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'attachment_url': [attach],'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
+
+                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'attachment_url': [attach], 
+                            'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")], 'replied_to_message': [replied_to_message], 'replied_to_user': [replied_to_user]
+                            , 'from_thread': [thread], 'from_thread_name': [thread_name]})
+
                         #temp_df = pd.DataFrame(data = [user, dics, content, time_stamp.strftime("%m/%d/%Y, %H:%M:%S")], Axis = 1)
                         #temp_df = {'username': user, 'disc': dics, 'message_content': content, 'time_stamp': time_stamp.strftime("%m/%d/%Y, %H:%M:%S")}
                     df = pd.concat([df, temp_df], ignore_index = True)
@@ -138,9 +170,13 @@ class CSV_Channel(commands.Cog):
                 messages = await channel.history(limit=None).flatten()
                 
                 for message in messages:
+                    
+
+
                     user = message.author.name
                     dics = message.author.discriminator
                     text = mention_to_user(content = message.content, guild = context.guild)
+                    text = channel_mention_or_role_formatter(fullText = text, guild = context.guild) # Function to convert IDs to names
                     time_stamp = message.created_at
                     mens = []
                     for people in message.mentions:
@@ -149,7 +185,7 @@ class CSV_Channel(commands.Cog):
                     user_roles = []
                     for roles in message.author.roles:
                         user_roles += [str(roles)]
-                    '''
+
                     attach = []
                     if message.attachments: # if message has an attachment(s)
                         attach = []
@@ -157,8 +193,10 @@ class CSV_Channel(commands.Cog):
                             attach += [str(a.url)]
 
                     temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'channel_name': [channel.name],'guild':[context.guild.name], 'attachment_url': [attach], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
+
                         #'user_roles': [user_roles[1:]
                         #temp_df = {'username': user, 'disc': dics, 'message_content': content, 'time_stamp': time_stamp.strftime("%m/%d/%Y, %H:%M:%S")}
+            
                     df = pd.concat([df, temp_df], ignore_index = True)
                     
         df.to_csv(f'{self.bot.config["output_url"]}/{context.guild.name}_full.csv', sep = '~')
@@ -174,13 +212,41 @@ def mention_to_user(content : str, guild: disnake.Guild) -> str:
     message = content
     
     for matches in re.findall(r'\<@\d+\>', content):
-        
         user = guild.get_member(int(matches[2:-1]))
         output = re.sub(r'\<@\d+\>', str(user), message, count = 1)
         message = output
         
     return message 
-        
+
+def channel_mention_or_role_formatter(fullText : str, guild:disnake.Guild) -> str:
+    fullMessage = fullText
+    allChannels = {} # Store all existing channels and roles into dictionaries
+    allRoles = {}
+
+    # Determine mapping between existing channel or role IDs 
+    # and their corresponding names
+    for channel in guild.text_channels:
+        allChannels.update({channel.id: channel.name})
+    for role in guild.roles:
+        allRoles.update({role.id: role.name})
+
+    # Replace every channel ID instance with their corresponding name mapping
+    for channelMentions in re.findall(r'\<#(\d+)\>', fullText):
+        channelName = allChannels.get(int(channelMentions))
+        channelName = "#{" + channelName + "}" # Format channel name for CSV file
+        replaceChannelID = re.sub(r'\<#\d+\>', channelName, fullMessage, count = 1)
+        fullMessage = replaceChannelID
+    
+    #Replace every instance of role ID mention with their corresponding name
+    for roleID in re.findall(r'\<@&(\d+)\>', fullMessage):
+        roleName = allRoles.get(int(roleID))
+        roleName = "@{" + roleName + "}" # Format role name for database
+        replaceRoleID = re.sub(r'\<@&\d+\>', roleName, fullMessage, count = 1)
+        fullMessage = replaceRoleID
+
+    return fullMessage
+
+
         
         
             
