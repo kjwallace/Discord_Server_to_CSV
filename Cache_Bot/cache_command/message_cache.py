@@ -3,7 +3,7 @@
 """
 Created on Wed May 18 19:01:39 2022
 
-@author: philipwallace
+
 """
 
 import disnake 
@@ -40,7 +40,8 @@ class CSV_Channel(commands.Cog):
                     mens = []
                     for people in message.mentions:
                         mens += [str(people)]
-                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': mens, 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
+                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': mens, 
+                    'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
                     #temp_df = pd.DataFrame(data = [user, dics, content, time_stamp.strftime("%m/%d/%Y, %H:%M:%S")], Axis = 1)
                     #temp_df = {'username': user, 'disc': dics, 'message_content': content, 'time_stamp': time_stamp.strftime("%m/%d/%Y, %H:%M:%S")}
                     df = pd.concat([df, temp_df], ignore_index = True)
@@ -80,12 +81,35 @@ class CSV_Channel(commands.Cog):
             print('_______________________________')
         '''
         for channel in channels:
+            messages=[]
+            in_threads = {}
+            for thread in channel.guild.threads:
+                for message in await thread.history(limit=None).flatten() :
+                    messages += [message]
+                    in_threads[message.id] = [thread.name, channel.name]
+
             if channel.type == disnake.ChannelType.text:
-                columns = ['username', 'disc', 'message_content', 'mentions','time_stamp']
+                columns = ['username', 'disc', 'message_content', 'mentions','time_stamp', 'replied_to_message', 'replied_to_user', 'from_thread', 'from_thread_name']
                 df = pd.DataFrame(columns = columns)
-                messages = await channel.history(limit=None).flatten()
-            
+                messages += await channel.history(limit=None).flatten()
+
                 for message in messages:
+                    # check if the message is from a thread
+                    if message.thread is not None:
+                        thread = True
+                        thread_name = message.thread.name + '-' + channel.name
+                    elif message.id in in_threads:
+                        thread_name = in_threads[message.id][0]+'-'+in_threads[message.id][1]
+                    else:
+                        thread = False
+                        thread_name = ""
+                    replied_to_message = ""
+                    replied_to_user = ""
+                    # regonize if the message is a reply
+                    if message.type == disnake.MessageType.reply:
+                        replied_to_message = message.reference.resolved.content
+                        replied_to_user = message.reference.resolved.author.name
+
                     user = message.author.name
                     dics = message.author.discriminator
                     text = mention_to_user(content = message.content, guild = context.guild)
@@ -93,7 +117,9 @@ class CSV_Channel(commands.Cog):
                     mens = []
                     for people in message.mentions:
                         mens += [str(people)]
-                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
+                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 
+                            'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")], 'replied_to_message': [replied_to_message], 'replied_to_user': [replied_to_user]
+                            , 'from_thread': [thread], 'from_thread_name': [thread_name]})
                         #temp_df = pd.DataFrame(data = [user, dics, content, time_stamp.strftime("%m/%d/%Y, %H:%M:%S")], Axis = 1)
                         #temp_df = {'username': user, 'disc': dics, 'message_content': content, 'time_stamp': time_stamp.strftime("%m/%d/%Y, %H:%M:%S")}
                     df = pd.concat([df, temp_df], ignore_index = True)
@@ -118,6 +144,9 @@ class CSV_Channel(commands.Cog):
                 messages = await channel.history(limit=None).flatten()
                 
                 for message in messages:
+                    
+
+
                     user = message.author.name
                     dics = message.author.discriminator
                     text = mention_to_user(content = message.content, guild = context.guild)
@@ -130,24 +159,19 @@ class CSV_Channel(commands.Cog):
                     for roles in message.author.roles:
                         user_roles += [str(roles)]
                     '''    
-                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 'channel_name': [channel.name],'guild':[context.guild.name], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
+                    
+                    temp_df = pd.DataFrame(data = {'username': [user], 'disc': [dics], 'message_content': [text],'mentions': [mens], 
+                    'channel_name': [channel.name],'guild':[context.guild.name], 'time_stamp': [time_stamp.strftime("%m/%d/%Y, %H:%M:%S")]})
                         #'user_roles': [user_roles[1:]
                         #temp_df = {'username': user, 'disc': dics, 'message_content': content, 'time_stamp': time_stamp.strftime("%m/%d/%Y, %H:%M:%S")}
+            
                     df = pd.concat([df, temp_df], ignore_index = True)
                     
         df.to_csv(f'{self.bot.config["output_url"]}/{context.guild.name}_full.csv', sep = '~')
         print("Done running full server")
         
         
-    @commands.command(
-        name = 'regex')
-    async def Regex(self, context: Context, *, boobs: str) -> None:
-        stuff = mention_to_user(content = boobs, guild = context.guild)
-        print(context.message.content)
-        print(stuff)
-        return None
-            
-            
+        
        
         
        
