@@ -160,6 +160,7 @@ class CSV_Channel(commands.Cog):
         name = 'SingleCSV',
         description = 'Makes the whole server into a one CSV')
     async def SingleCSV(self, context: Context) -> None:
+        print("Starting to run on whole server!")
         channels = await context.guild.fetch_channels()
         columns = ['username', 'disc', 'user_roles', 'message_content', 'mentions','channel_name', 'guild', 'attachment_url', 'time_stamp']
         df = pd.DataFrame(columns = columns)
@@ -181,7 +182,7 @@ class CSV_Channel(commands.Cog):
                     mens = []
                     for people in message.mentions:
                         mens += [str(people)]
-                    '''    
+                       
                     user_roles = []
                     for roles in message.author.roles:
                         user_roles += [str(roles)]
@@ -232,17 +233,23 @@ def channel_mention_or_role_formatter(fullText : str, guild:disnake.Guild) -> st
 
     # Replace every channel ID instance with their corresponding name mapping
     for channelMentions in re.findall(r'\<#(\d+)\>', fullText):
-        channelName = allChannels.get(int(channelMentions))
+        channel_obj = guild.get_channel(int(channelMentions[2:-1]))
+        channelName = str(channel_obj.name)
         channelName = "#{" + channelName + "}" # Format channel name for CSV file
         replaceChannelID = re.sub(r'\<#\d+\>', channelName, fullMessage, count = 1)
         fullMessage = replaceChannelID
     
     #Replace every instance of role ID mention with their corresponding name
     for roleID in re.findall(r'\<@&(\d+)\>', fullMessage):
-        roleName = allRoles.get(int(roleID))
-        roleName = "@{" + roleName + "}" # Format role name for database
-        replaceRoleID = re.sub(r'\<@&\d+\>', roleName, fullMessage, count = 1)
-        fullMessage = replaceRoleID
+        role_obj = guild.get_role(int(roleID[2:-1]))
+        #roleName = str(role_obj.name)
+        try:
+            roleName = str(role_obj.name)
+            roleName = "@{" + roleName + "}" # Format role name for database
+            replaceRoleID = re.sub(r'\<@&\d+\>', roleName, fullMessage, count = 1)
+            fullMessage = replaceRoleID
+        except:
+            pass
 
     return fullMessage
 
